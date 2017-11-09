@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.workflow.support.storage.SimpleXStreamFlowNodeStorage_-Tag plugin="workflow-support@2.14">
+  <node class="org.jenkinsci.plugins.workflow.cps.nodes.StepAtomNode" plugin="workflow-cps@2.39">
+    <parentIds>
+      <string>4</string>
+    </parentIds>
+    <id>5</id>
+    <descriptorId>org.jenkinsci.plugins.workflow.steps.CoreStep</descriptorId>
+  </node>
+  <actions>
+    <org.jenkinsci.plugins.workflow.support.actions.LogActionImpl>
+      <charset>windows-1252</charset>
+    </org.jenkinsci.plugins.workflow.support.actions.LogActionImpl>
+    <org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl plugin="workflow-cps@2.39">
+      <arguments class="linked-hash-map">
+        <entry>
+          <string>delegate</string>
+          <org.jenkinsci.plugins.structs.describable.UninstantiatedDescribable plugin="structs@1.7">
+            <symbol>kubernetes</symbol>
+            <arguments class="tree-map">
+              <entry>
+                <string>KubernetesUrl</string>
+                <string>http://10.15.99.203:8080/r/projects/1a21/kubernetes:6443/api/v1/namespaces/default/services/</string>
+              </entry>
+              <entry>
+                <string>Token</string>
+                <string>QmFzaWMgUkVGQk56QkdNVUpHTnpjNU5qY3pNVE5EUWtFNlYxRm1PSGxwY2pGb1ZrMTNaV2xITjIxR1JYaHpkMEZrU0ZwNlNFSjNUV1pRTVd0RWEzaFNVQT09</string>
+              </entry>
+            </arguments>
+          </org.jenkinsci.plugins.structs.describable.UninstantiatedDescribable>
+        </entry>
+      </arguments>
+      <isUnmodifiedBySanitization>true</isUnmodifiedBySanitization>
+    </org.jenkinsci.plugins.workflow.cps.actions.ArgumentsActionImpl>
+    <org.jenkinsci.plugins.workflow.actions.TimingAction plugin="workflow-api@2.20">
+      <startTime>1510214036711</startTime>
+    </org.jenkinsci.plugins.workflow.actions.TimingAction>
+  </actions>
+</org.jenkinsci.plugins.workflow.support.storage.SimpleXStreamFlowNodeStorage_-Tag>

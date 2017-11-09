@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.BuilderOrPublisher plugin="PipelineCompatible2@1">
+      <KubernetesUrl>http://10.15.99.203:8080/r/projects/1a21/kubernetes:6443/api/v1/namespaces/default/services/</KubernetesUrl>
+      <Token>QmFzaWMgUkVGQk56QkdNVUpHTnpjNU5qY3pNVE5EUWtFNlYxRm1PSGxwY2pGb1ZrMTNaV2xITjIxR1JYaHpkMEZrU0ZwNlNFSjNUV1pRTVd0RWEzaFNVQT09</Token>
+    </org.jenkinsci.plugins.BuilderOrPublisher>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
