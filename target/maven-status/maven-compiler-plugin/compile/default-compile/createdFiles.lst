@@ -1,6 +1,0 @@
-META-INF\annotations\org.jenkinsci.Symbol
-org\jenkinsci\plugins\BuilderOrPublisher.stapler
-org\jenkinsci\plugins\BuilderOrPublisher.class
-org\jenkinsci\plugins\KubernetesInfoAction.class
-META-INF\annotations\hudson.Extension
-org\jenkinsci\plugins\BuilderOrPublisher$DescriptorImpl.class
