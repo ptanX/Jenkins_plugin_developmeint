@@ -3,12 +3,14 @@ package org.jenkinsci.plugins;
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.Run;
+import org.json.*;
 
 import javax.annotation.CheckForNull;
 
 public class KubernetesInfoAction implements Action{
 
-    public String messages;
+    public JSONArray ContainerInfo;
+//    public String messages;
     public Run<?, ?> run;
     @Override
     public String getIconFileName() {
@@ -25,16 +27,18 @@ public class KubernetesInfoAction implements Action{
         return "KubernetesInfo";
     }
 
-    public String getMessages() {
-        return messages;
+    public JSONArray getContainerInfo() {
+//        JSONObject messagesJson = new JSONObject(messages);
+//        JSONArray messagesJsonArray = messagesJson.getJSONArray("items");
+        return ContainerInfo;
     }
 
     public Run<?, ?> getRun() {
         return run;
     }
 
-    KubernetesInfoAction(final String messages, final Run<?, ?> run) {
-        this.messages = messages;
+    KubernetesInfoAction(final JSONArray ContainerInfo, final Run<?, ?> run) {
+        this.ContainerInfo = ContainerInfo;
         this.run = run;
     }
 }

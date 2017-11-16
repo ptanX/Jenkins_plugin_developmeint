@@ -7,4 +7,5 @@
     <f:entry title="Token" field="Token">
         <f:textbox/>
     </f:entry>
+
 </j:jelly>

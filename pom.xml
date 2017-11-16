@@ -7,7 +7,7 @@
         <version>2.33</version>
         <relativePath />
     </parent>
-    <artifactId>PipelineCompatible2</artifactId>
+    <artifactId>PipelineContainerInfo</artifactId>
     <version>1</version>
     <packaging>hpi</packaging>
     <properties>
@@ -15,9 +15,10 @@
         <workflow-step-api-plugin.version>2.12</workflow-step-api-plugin.version>
         <workflow-support-plugin.version>2.14</workflow-support-plugin.version>
         <workflow-cps-plugin.version>2.39</workflow-cps-plugin.version>
+        <java.level>8</java.level>
     </properties>
-    <name>Pipeline Compatible 2 Plugin</name>
-    <description>TODO</description>
+    <name>Pipeline Container Information Plugin</name>
+    <description>Get Container Information</description>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/TODO+Plugin</url>
     <licenses>
         <license>
@@ -111,6 +112,21 @@
             <version>${workflow-support-plugin.version}</version>
             <classifier>tests</classifier>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        <groupId>org.json</groupId>
+        <artifactId>json</artifactId>
+        <version>20171018</version>
+        </dependency>
+        <dependency>
+            <groupId>org.csanchez.jenkins.plugins</groupId>
+            <artifactId>kubernetes</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-client</artifactId>
+            <version>3.0.3</version>
         </dependency>
     </dependencies>
 </project>
