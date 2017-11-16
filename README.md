@@ -1,1 +1,1 @@
-# Development jenkins for get information from Kubernetes cluster
+# Development jenkins plugins for get information from Kubernetes cluster
