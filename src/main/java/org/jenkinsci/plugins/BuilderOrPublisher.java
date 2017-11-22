@@ -30,28 +30,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
-    public String KubernetesUrl;
     public String Namespace;
-    public String Token;
     public String ServiceName;
     public String NodeName;
 
     @DataBoundConstructor
-    public BuilderOrPublisher(String KubernetesUrl, String Token, String Namespace, String ServiceName, String NodeName) {
-        this.KubernetesUrl = KubernetesUrl;
-        this.Token = Token;
+    public BuilderOrPublisher( String Namespace, String ServiceName, String NodeName) {
         this.Namespace = Namespace;
         this.ServiceName = ServiceName;
         this.NodeName = NodeName;
     }
 
-    public String getKubernetesUrl() {
-        return KubernetesUrl;
-    }
-
-    public String getToken() {
-        return Token;
-    }
 
     public String getNamespace() {
         return Namespace;
@@ -64,7 +53,6 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println("Start get Environment information ");
-        listener.getLogger().println(this.getKubeToken(this.getKubeCloud()));
         JSONObject ServicesInfo = new JSONObject();
         JSONObject ServiceInfo = new JSONObject();
         JSONArray PodsInfo = new JSONArray();
@@ -80,11 +68,11 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
         }
 
         JSONArray ContainerInfo = this.createContainerInfo(PodsInfo, ServiceInfo);
-        KubernetesInfoAction buildAction = new KubernetesInfoAction(ContainerInfo, run);
+        EnvironmentInfo buildAction = new EnvironmentInfo(ContainerInfo, run, this.Namespace, this.ServiceName, this.NodeName);
         run.addAction(buildAction);
     }
 
-    @Symbol("kubernetes")
+    @Symbol("kubernetesinfo")
     @Extension
     public static final class  DescriptorImpl extends BuildStepDescriptor<Builder> {
         @Override
@@ -110,7 +98,7 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
     }
 
 
-    private String getKubeToken(KubernetesCloud cloud) throws IOException {
+    public String getKubeToken(KubernetesCloud cloud) throws IOException {
         StandardCredentials standardCredential = this.getCredentials(cloud.getCredentialsId());
         return ((TokenProducer) standardCredential).getToken(cloud.getServerUrl(), cloud.getServerCertificate(), cloud.isSkipTlsVerify());
     }
@@ -132,16 +120,13 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
                 return slave.getCloudName();
             }
         }
-//        if (! (node instanceof KubernetesSlave)) {
-//            throw new AbortException(String.format("Node is not a Kubernetes node: %s", node != null ? node.getNodeName() : null));
-//        }
         return "Khong tim thay node";
     }
 
 
     public String getKubeInfo(String Namespace, String Factor) throws Exception{
-        String AuthorizationValue = "Bearer " + Token;
-        URL obj = new URL(KubernetesUrl + Namespace + "/" + Factor);
+        String AuthorizationValue = "Bearer " + this.getKubeToken(this.getKubeCloud());
+        URL obj = new URL(this.getKubeCloud().getServerUrl() + "/api/v1/namespaces/" + Namespace + "/" + Factor);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
         con.setRequestProperty("Authorization", AuthorizationValue);
@@ -172,13 +157,14 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
                             JSONObject PodContainerInfo = new JSONObject();
                             JSONArray InternalInfo = new JSONArray();
                             JSONArray ExternalInfo = new JSONArray();
-                            PodContainerInfo.put("Container name", PodContainers.getJSONObject(k).get("name"));
-                            PodContainerInfo.put("Container status","Running");
+                            PodContainerInfo.put("PodName",PodsInfo.getJSONObject(j).getJSONObject("metadata").get("name"));
+                            PodContainerInfo.put("ContainerName", PodContainers.getJSONObject(k).get("name"));
+                            PodContainerInfo.put("ContainerStatus","Running");
                             for(int x = 0; x < PodContainers.getJSONObject(k).getJSONArray("ports").length(); x++){
                                 JSONObject InternalPort = new JSONObject();
                                 JSONObject ExternalPort = new JSONObject();
                                 InternalPort.put("Port", PodContainers.getJSONObject(k).getJSONArray("ports").getJSONObject(x).get("containerPort"));
-                                InternalPort.put("Internal IP", PodsInfo.getJSONObject(j).getJSONObject("status").get("podIP"));
+                                InternalPort.put("InternalIP", PodsInfo.getJSONObject(j).getJSONObject("status").get("podIP"));
                                 if (PodContainers.getJSONObject(k).getJSONArray("ports").getJSONObject(x).has("name")){
                                     InternalPort.put("Service",PodContainers.getJSONObject(k).getJSONArray("ports").getJSONObject(x).get("name"));
                                 }else {
@@ -187,7 +173,7 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
                                 for(int y = 0; y < ServiceInfo.getJSONObject("spec").getJSONArray("ports").length(); y++){
                                     if(ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).get("targetPort").equals(InternalPort.get("Port"))){
                                         ExternalPort.put("Port", ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).get("nodePort"));
-                                        ExternalPort.put("External IP",PodsInfo.getJSONObject(j).getJSONObject("status").get("hostIP"));
+                                        ExternalPort.put("ExternalIP",PodsInfo.getJSONObject(j).getJSONObject("status").get("hostIP"));
                                         if (ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).has("name")){
                                             ExternalPort.put("Service",ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).get("name"));
                                         }else {
@@ -199,8 +185,8 @@ public class BuilderOrPublisher extends Builder implements SimpleBuildStep {
                                 InternalInfo.put(InternalPort);
                                 ExternalInfo.put(ExternalPort);
                             }
-                            PodContainerInfo.put("Internal info", InternalInfo);
-                            PodContainerInfo.put("External info", ExternalInfo);
+                            PodContainerInfo.put("InternalInfo", InternalInfo);
+                            PodContainerInfo.put("ExternalInfo", ExternalInfo);
                             ContainerInfo.put(PodContainerInfo);
                         }
                     }

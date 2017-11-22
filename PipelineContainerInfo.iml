@@ -42,22 +42,18 @@
     <orderEntry type="library" name="Maven: org.jenkins-ci:symbol-annotation:1.7" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.workflow:workflow-step-api:2.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-cps:2.39" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-scm-step:2.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:script-security:1.31" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.kohsuke:groovy-sandbox:1.13" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:scm-api:2.0.8" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:script-security:1.31" level="project" />
+    <orderEntry type="library" name="Maven: org.kohsuke:groovy-sandbox:1.13" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:scm-api:2.0.8" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.cloudbees:groovy-cps:1.18" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.ui:jquery-detached:1.2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.ui:ace-editor:1.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.cloudbees:diff4j:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-cps:tests:2.39" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-job:2.11.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-basic-steps:2.6" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:mailer:1.18" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:display-url-api:0.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:junit:1.3" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-durable-task-step:2.13" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:durable-task:1.14" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-basic-steps:2.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins:mailer:1.13" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-durable-task-step:2.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-step-api:tests:2.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-api:2.20" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.plugins.workflow:workflow-support:2.14" level="project" />
@@ -69,9 +65,6 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.4.3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-logging:commons-logging:1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:credentials:2.1.7" level="project" />
-    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.5" level="project" />
-    <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:variant:1.0" level="project" />
     <orderEntry type="library" name="Maven: io.fabric8:kubernetes-client:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: io.fabric8:kubernetes-model:2.0.4" level="project" />
@@ -89,13 +82,39 @@
     <orderEntry type="library" name="Maven: io.fabric8:zjsonpatch:0.3.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.mifmif:generex:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: dk.brics.automaton:automaton:1.11-8" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.workflow:workflow-cps-global-lib:2.7" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git-server:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:git-client:1.19.7" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit:3.7.1.201504261725-r" level="project" />
+    <orderEntry type="library" name="Maven: com.jcraft:jsch:0.1.50" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.javaewah:JavaEWAH:0.7.9" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit.http.server:3.7.1.201504261725-r" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.jgit:org.eclipse.jgit.java7:3.7.1.201504261725-r" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:ssh-credentials:1.12" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:cloudbees-folder:5.12" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ivy:ivy:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:credentials:2.1.7" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.5" level="project" />
+    <orderEntry type="library" name="Maven: org.abego.treelayout:org.abego.treelayout.core:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:durable-task:1.13" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.workflow:workflow-scm-step:2.4" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:credentials-binding:1.11" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:plain-credentials:1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:docker-workflow:1.9" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:docker-commons:1.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins:authentication-tokens:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.icon-shim:icon-shim:1.0.3" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkinsci.plugins:pipeline-model-extensions:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkinsci.plugins:pipeline-model-api:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.lib:pipeline-model-json-shaded:1.1.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.findbugs:annotations:3.0.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.jcip:jcip-annotations:1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.14" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:jenkins-core:2.7.3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.plugins.icon-shim:icon-set:1.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.jenkins-ci.plugins.icon-shim:icon-set:1.0.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:remoting:2.60" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci:constant-pool-scanner:1.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jenkins-ci.main:cli:2.7.3" level="project" />
@@ -201,7 +220,7 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-fileupload:commons-fileupload:1.3.1-jenkins-1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.mindrot:jbcrypt:0.3m" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:11.0.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:1.3.9" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.jcraft:jzlib:1.1.3-kohsuke-1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.modules:instance-identity:1.5.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.bouncycastle:bcpkix-jdk15on:1.54" level="project" />
@@ -231,7 +250,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.jenkins-ci.main:jenkins-test-harness-htmlunit:2.18-1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: xalan:xalan:2.7.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: xalan:serializer:2.7.2" level="project" />
-    <orderEntry type="library" scope="TEST" name="Maven: org.apache.commons:commons-lang3:3.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: net.sourceforge.nekohtml:nekohtml:1.9.22" level="project" />

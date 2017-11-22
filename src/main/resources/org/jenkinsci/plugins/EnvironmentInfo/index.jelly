@@ -1,0 +1,88 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <st:contentType value="text/html;charset=UTF-8" />
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th {
+            padding: 20px;
+            font-size: 20px;
+        }
+        td {
+            padding: 15px;
+            font-size: 15px
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <l:layout>
+            <l:main-panel>
+                <h1>Server Information</h1>
+                <table  style='width:100%' id='InfoTable'>
+                    <tr>
+                        <th>stt</th>
+                        <th>Server Name</th>
+                        <th>System Information</th>
+                        <th>Server Status</th>
+                        <th>Local Access</th>
+                        <th>External Access</th>
+                        <th>Output</th>
+                        <th>Action</th>
+                    </tr>
+                </table>
+                <button onclick="myFunction2()">Click me</button>
+                <p id="demo"></p>
+                <p id="demo2"></p>
+
+                <script>
+                    var myAction = <st:bind value="${it}"/>
+                    function myFunction(name) {
+                         myAction.deletePod(name,function(t){
+                                                    document.getElementById('demo').innerHTML = t.responseObject();
+                                                });
+                    }
+                </script>
+                <script>
+                    var myAction = <st:bind value="${it}"/>
+                    function myFunction2() {
+                         myAction.refreshInformation(function(t){
+                                                    document.getElementById('demo2').innerHTML = t.responseObject();
+                                                });
+                    }
+                </script>
+                <script>
+                    var x = "";
+                    var myAction = <st:bind value="${it}"/>;
+                    myAction.getContainerInfo(function(t){
+                                                var Object = t.responseObject();
+                                                JsonObject = JSON.parse(Object);
+                                                var table = document.getElementById("InfoTable");
+                                                for(var i = 0; i != JsonObject.length; i++){
+                                                    var Columns = [];
+                                                    var row = table.insertRow();
+                                                    for(var j = 0; j !=8 ; j++){
+                                                        Columns.push(row.insertCell(j));
+
+                                                    }
+                                                    Columns[0].innerHTML = i+1;
+                                                    Columns[1].innerHTML = JsonObject[i].ContainerName;
+                                                    Columns[3].innerHTML = JsonObject[i].ContainerStatus;
+                                                    for(var k=0; k != JsonObject[i].InternalInfo.length; k++){
+                                                        Columns[4].innerHTML += JsonObject[i].InternalInfo[k].Service + " ";
+                                                        Columns[4].innerHTML += JsonObject[i].InternalInfo[k].InternalIP + " ";
+                                                        Columns[4].innerHTML += JsonObject[i].InternalInfo[k].Port + "<br/>";
+                                                    }
+                                                    for(var h=0; h != JsonObject[i].InternalInfo.length; h++){
+                                                        Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Service + " ";
+                                                        Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].ExternalIP + " ";
+                                                        Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Port + "<br/>";
+                                                    }
+                                                    Columns[7].innerHTML = '<input id="Button" type="button" onclick="myFunction(\'' + 'nginx' + '\')" value="Delete" />';
+                                                }
+
+                                            });
+                </script>
+            </l:main-panel>
+    </l:layout>
+</j:jelly>

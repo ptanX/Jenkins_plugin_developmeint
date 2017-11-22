@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="kubernetes-client-1.4.27">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/work/plugins/kubernetes/WEB-INF/lib/kubernetes-client-1.4.27.jar!/" />
+      <root url="jar://$PROJECT_DIR$/work/plugins/kubernetes/WEB-INF/lib/kubernetes-model-1.0.64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/work/plugins/kubernetes/WEB-INF/lib/kubernetes.jar!/" />
+      <root url="file://$PROJECT_DIR$" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="file://$PROJECT_DIR$/target/site/apidocs" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
