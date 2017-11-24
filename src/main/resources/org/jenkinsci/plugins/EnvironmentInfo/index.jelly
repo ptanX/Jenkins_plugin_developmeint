@@ -21,7 +21,7 @@
                 <h1>Server Information</h1>
                 <table  style='width:100%' id='InfoTable'>
                     <tr>
-                        <th>stt</th>
+                        <th>No</th>
                         <th>Server Name</th>
                         <th>System Information</th>
                         <th>Server Status</th>
@@ -31,13 +31,13 @@
                         <th>Action</th>
                     </tr>
                 </table>
-                <button onclick="myFunction2()">Click me</button>
+                <button onclick="refreshFunction()">Refresh</button>
                 <p id="demo"></p>
                 <p id="demo2"></p>
 
                 <script>
                     var myAction = <st:bind value="${it}"/>
-                    function myFunction(name) {
+                    function deleteFunction(name) {
                          myAction.deletePod(name,function(t){
                                                     document.getElementById('demo').innerHTML = t.responseObject();
                                                 });
@@ -45,7 +45,7 @@
                 </script>
                 <script>
                     var myAction = <st:bind value="${it}"/>
-                    function myFunction2() {
+                    function refreshFunction() {
                          myAction.refreshInformation(function(t){
                                                     document.getElementById('demo2').innerHTML = t.responseObject();
                                                 });
@@ -73,12 +73,18 @@
                                                         Columns[4].innerHTML += JsonObject[i].InternalInfo[k].InternalIP + " ";
                                                         Columns[4].innerHTML += JsonObject[i].InternalInfo[k].Port + "<br/>";
                                                     }
-                                                    for(var h=0; h != JsonObject[i].InternalInfo.length; h++){
-                                                        Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Service + " ";
-                                                        Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].ExternalIP + " ";
-                                                        Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Port + "<br/>";
+                                                    for(var h=0; h != JsonObject[i].ExternalInfo.length; h++){
+                                                        if(JsonObject[i].ExternalInfo[h].hasOwnProperty("Service")){
+                                                            Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Service + " ";
+                                                        }
+                                                        if(JsonObject[i].ExternalInfo[h].hasOwnProperty("ExternalIP")){
+                                                            Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].ExternalIP + " ";
+                                                        }
+                                                        if(JsonObject[i].ExternalInfo[h].hasOwnProperty("Port")){
+                                                            Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Port + "<br/>";
+                                                        }
                                                     }
-                                                    Columns[7].innerHTML = '<input id="Button" type="button" onclick="myFunction(\'' + 'nginx' + '\')" value="Delete" />';
+                                                    Columns[7].innerHTML = '<input id="Button" type="button" onclick="deleteFunction(\'' + JsonObject[i].PodName + '\')" value="Delete" />';
                                                 }
 
                                             });
