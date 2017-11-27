@@ -16,8 +16,7 @@ import org.csanchez.jenkins.plugins.kubernetes.KubernetesCloud;
 import org.csanchez.jenkins.plugins.kubernetes.KubernetesSlave;
 import org.csanchez.jenkins.plugins.kubernetes.TokenProducer;
 import org.jenkinsci.Symbol;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.*;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import javax.annotation.Nonnull;
@@ -28,19 +27,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class getEnvInfoBuilder extends Builder implements SimpleBuildStep {
     public String Namespace;
-    public String ServiceName;
     public String NodeName;
+    public String id;
 
     @DataBoundConstructor
-    public getEnvInfoBuilder(String Namespace, String ServiceName, String NodeName) {
+    public getEnvInfoBuilder(String Namespace, String NodeName, String id) {
         this.Namespace = Namespace;
-        this.ServiceName = ServiceName;
         this.NodeName = NodeName;
+        this.id = id;
     }
 
 
@@ -48,35 +46,43 @@ public class getEnvInfoBuilder extends Builder implements SimpleBuildStep {
         return Namespace;
     }
 
-    public String getServiceName() {
-        return ServiceName;
+    public String getId() {
+        return id;
     }
 
     @Override
     public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener) throws InterruptedException, IOException {
         listener.getLogger().println("Starting get Environment information ");
-        JSONObject ServicesInfo = new JSONObject();
-        JSONObject ServiceInfo = new JSONObject();
+        JSONArray ServicesInfo = new JSONArray();
+        JSONArray ServicesWithId = new JSONArray();
         JSONArray PodsInfo = new JSONArray();
+        JSONArray PodsWithId = new JSONArray();
         Thread.sleep(20000);
         try {
             PodsInfo = new JSONObject(this.getKubeInfo(this.getKubeCloud().getServerUrl(),this.getKubeToken(this.getKubeCloud()), Namespace, "pods")).getJSONArray("items");
-            ServicesInfo = new JSONObject(this.getKubeInfo(this.getKubeCloud().getServerUrl(),this.getKubeToken(this.getKubeCloud()), Namespace,"services"));
+            ServicesInfo = new JSONObject(this.getKubeInfo(this.getKubeCloud().getServerUrl(),this.getKubeToken(this.getKubeCloud()), Namespace,"services")).getJSONArray("items");
         } catch (Exception e){listener.getLogger().println("Loi khi build");}
-        for(int i=0; i < ServicesInfo.getJSONArray("items").length(); i++){
-            if(ServicesInfo.getJSONArray("items").getJSONObject(i).getJSONObject("metadata").get("name").equals(ServiceName)){
-                ServiceInfo = ServicesInfo.getJSONArray("items").getJSONObject(i);
-                break;
+        for(int i=0; i < ServicesInfo.length(); i++){
+            if(ServicesInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").has("id")){
+                if(ServicesInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").get("id").equals(this.id)){
+                    ServicesWithId.put(ServicesInfo.getJSONObject(i));
+                }
             }
         }
-
-        JSONArray ContainerInfo = this.createContainerInfo(PodsInfo, ServiceInfo);
-        EnvironmentInfo buildAction = new EnvironmentInfo(ContainerInfo, run, this.Namespace, this.ServiceName, this.NodeName, this.getKubeToken(this.getKubeCloud()), this.getKubeCloud().getServerUrl());
+        for(int i = 0; i < PodsInfo.length(); i++){
+            if(PodsInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").has("id")){
+                if(PodsInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").get("id").equals(this.id)){
+                    PodsWithId.put(PodsInfo.getJSONObject(i));
+                }
+            }
+        }
+        JSONArray ContainerInfo = this.createContainerInfo(PodsWithId, ServicesWithId);
+        EnvironmentInfo buildAction = new EnvironmentInfo(ContainerInfo, run, this.Namespace, this.id, this.NodeName, this.getKubeToken(this.getKubeCloud()), this.getKubeCloud().getServerUrl());
         run.addAction(buildAction);
     }
 
 
-    @Symbol("kubernetesinfo")
+    @Symbol("getEnvironmentInfo")
     @Extension
     public static final class  DescriptorImpl extends BuildStepDescriptor<Builder> {
         @Override
@@ -87,13 +93,13 @@ public class getEnvInfoBuilder extends Builder implements SimpleBuildStep {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return "Kubernetes Information";
+            return "Server Information";
         }
     }
 
 
     public KubernetesCloud getKubeCloud() throws AbortException {
-        Cloud cloud = Jenkins.getInstance().getCloud(this.getKubeCloudName());
+        Cloud cloud = Jenkins.getInstance().getCloud("kubernetes");
         if(cloud instanceof KubernetesCloud){
             return (KubernetesCloud) cloud;
         } else{
@@ -179,60 +185,78 @@ public class getEnvInfoBuilder extends Builder implements SimpleBuildStep {
     }
 
 
-    public JSONArray createContainerInfo(JSONArray PodsInfo, JSONObject ServiceInfo) {
-        JSONArray ContainerInfo = new JSONArray();
-        for(int i = 0; i < ServiceInfo.getJSONObject("spec").getJSONObject("selector").names().length(); i++){
-            String Selector = ServiceInfo.getJSONObject("spec").getJSONObject("selector").names().getString(i);
-            for(int j = 0; j < PodsInfo.length(); j++){
-                if(PodsInfo.getJSONObject(j).getJSONObject("metadata").getJSONObject("labels").has(Selector)){
-                    if (PodsInfo.getJSONObject(j).getJSONObject("metadata").getJSONObject("labels").get(Selector).
-                            equals(ServiceInfo.getJSONObject("spec").getJSONObject("selector").get(Selector))){
-                        JSONArray PodContainers = PodsInfo.getJSONObject(j).getJSONObject("spec").getJSONArray("containers");
-                        for(int k = 0;k < PodContainers.length(); k++){
-                            JSONObject PodContainerInfo = new JSONObject();
-                            JSONArray InternalInfo = new JSONArray();
-                            JSONArray ExternalInfo = new JSONArray();
-                            PodContainerInfo.put("PodName",PodsInfo.getJSONObject(j).getJSONObject("metadata").get("name"));
-                            PodContainerInfo.put("ContainerName", PodContainers.getJSONObject(k).get("name"));
-                            if ((Boolean) PodsInfo.getJSONObject(j).getJSONObject("status").getJSONArray("containerStatuses").getJSONObject(0).get("ready")){
-                                PodContainerInfo.put("ContainerStatus","Running");
+    public boolean compareServiceAndPods(JSONObject ServiceSelector, JSONObject PodLabels){
+        Iterator<String> ListSelectors = ServiceSelector.keys();
+        while(ListSelectors.hasNext()){
+            String Key = ListSelectors.next();
+            if (!(PodLabels.has(Key) && PodLabels.get(Key).equals(ServiceSelector.get(Key)))){
+                return false;
+            }
+        }
+        return true;
+    }
 
-                            } else {
-                                PodContainerInfo.put("ContainerStatus","failed");
-                            }
-                            for(int x = 0; x < PodContainers.getJSONObject(k).getJSONArray("ports").length(); x++){
-                                JSONObject InternalPort = new JSONObject();
-                                JSONObject ExternalPort = new JSONObject();
-                                InternalPort.put("Port", PodContainers.getJSONObject(k).getJSONArray("ports").getJSONObject(x).get("containerPort"));
-                                if(PodsInfo.getJSONObject(j).getJSONObject("status").has("podIP")){
-                                    InternalPort.put("InternalIP", PodsInfo.getJSONObject(j).getJSONObject("status").get("podIP"));
-                                }
-                                if (PodContainers.getJSONObject(k).getJSONArray("ports").getJSONObject(x).has("name")){
-                                    InternalPort.put("Service",PodContainers.getJSONObject(k).getJSONArray("ports").getJSONObject(x).get("name"));
-                                }else {
-                                    InternalPort.put("Service","");
-                                }
-                                for(int y = 0; y < ServiceInfo.getJSONObject("spec").getJSONArray("ports").length(); y++){
-                                    if(ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).get("targetPort").equals(InternalPort.get("Port"))){
-                                        ExternalPort.put("Port", ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).get("nodePort"));
-                                        ExternalPort.put("ExternalIP",PodsInfo.getJSONObject(j).getJSONObject("status").get("hostIP"));
-                                        if (ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).has("name")){
-                                            ExternalPort.put("Service",ServiceInfo.getJSONObject("spec").getJSONArray("ports").getJSONObject(y).get("name"));
-                                        }else {
-                                            ExternalPort.put("Service","");
-                                        }
-                                        break;
-                                    }
-                                }
-                                InternalInfo.put(InternalPort);
-                                ExternalInfo.put(ExternalPort);
-                            }
-                            PodContainerInfo.put("InternalInfo", InternalInfo);
-                            PodContainerInfo.put("ExternalInfo", ExternalInfo);
-                            ContainerInfo.put(PodContainerInfo);
+
+    public JSONArray createContainerInfo(JSONArray PodsWithId, JSONArray ServicesWithId){
+        JSONArray ContainerInfo = new JSONArray();
+        if(PodsWithId.length() > 0){
+            for(int i = 0; i < PodsWithId.length(); i++){
+                JSONObject PodContainerInfo = new JSONObject();
+                JSONObject PodContainer = PodsWithId.getJSONObject(i).getJSONObject("spec").getJSONArray("containers").getJSONObject(0);
+                JSONArray InternalInfo = new JSONArray();
+                JSONArray ExternalInfo = new JSONArray();
+                JSONObject EnvironmentVariables = new JSONObject();
+                PodContainerInfo.put("PodName",PodsWithId.getJSONObject(i).getJSONObject("metadata").get("name"));
+                PodContainerInfo.put("ContainerName", PodContainer.get("name"));
+                if ((Boolean) PodsWithId.getJSONObject(i).getJSONObject("status").getJSONArray("containerStatuses").getJSONObject(0).get("ready")){
+                    PodContainerInfo.put("ContainerStatus","Running");
+
+                } else {
+                    PodContainerInfo.put("ContainerStatus","failed");
+                }
+                if(PodContainer.has("env")){
+                    for(int y = 0; y < PodContainer.getJSONArray("env").length(); y++){
+                        if(!PodContainer.getJSONArray("env").getJSONObject(y).get("name").equals("POD_IP")){
+                            EnvironmentVariables.put((String) PodContainer.getJSONArray("env").getJSONObject(y).get("name"),
+                                    PodContainer.getJSONArray("env").getJSONObject(y).get("value"));
                         }
                     }
                 }
+                PodContainerInfo.put("env", EnvironmentVariables);
+                for(int j = 0; j < PodContainer.getJSONArray("ports").length(); j++){
+                    JSONObject InternalPort = new JSONObject();
+                    JSONObject ExternalPort = new JSONObject();
+                    InternalPort.put("Port", PodContainer.getJSONArray("ports").getJSONObject(j).get("containerPort"));
+                    if(PodsWithId.getJSONObject(i).getJSONObject("status").has("podIP")){
+                        InternalPort.put("InternalIP", PodsWithId.getJSONObject(i).getJSONObject("status").get("podIP"));
+                    }
+                    if (PodContainer.getJSONArray("ports").getJSONObject(j).has("name")){
+                        InternalPort.put("Service",PodContainer.getJSONArray("ports").getJSONObject(j).get("name"));
+                    }else {
+                        InternalPort.put("Service","");
+                    }
+                    for(int k = 0; k < ServicesWithId.length(); k++){
+                        if(this.compareServiceAndPods(ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONObject("selector"),
+                                PodsWithId.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels"))){
+                            for(int x = 0; x < ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").length(); x++){
+                                if(ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("targetPort").equals(InternalPort.get("Port"))){
+                                    ExternalPort.put("Port", ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("nodePort"));
+                                    ExternalPort.put("ExternalIP",PodsWithId.getJSONObject(i).getJSONObject("status").get("hostIP"));
+                                    if (ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).has("name")){
+                                        ExternalPort.put("Service",ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("name"));
+                                    }else {
+                                        ExternalPort.put("Service","");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    InternalInfo.put(InternalPort);
+                    ExternalInfo.put(ExternalPort);
+                }
+                PodContainerInfo.put("InternalInfo", InternalInfo);
+                PodContainerInfo.put("ExternalInfo", ExternalInfo);
+                ContainerInfo.put(PodContainerInfo);
             }
         }
         return ContainerInfo;

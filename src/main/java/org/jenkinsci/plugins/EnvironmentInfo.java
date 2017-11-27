@@ -2,6 +2,7 @@ package org.jenkinsci.plugins;
 
 import hudson.model.Action;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import org.json.*;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
@@ -13,7 +14,7 @@ public class EnvironmentInfo implements Action{
     private JSONArray ContainerInfo;
     private Run<?, ?> run;
     private String NodeName;
-    private String ServiceName;
+    private String id;
     private String Namespace;
     private String Token;
     private String KuberUrl;
@@ -41,8 +42,8 @@ public class EnvironmentInfo implements Action{
         return Namespace;
     }
 
-    public String getServiceName() {
-        return ServiceName;
+    public String getId() {
+        return id;
     }
 
     public String getNodeName(){
@@ -60,7 +61,7 @@ public class EnvironmentInfo implements Action{
 
     @JavaScriptMethod
     public String deletePod(String podsName) throws Exception {
-        getEnvInfoBuilder BuildInformation =new getEnvInfoBuilder(this.Namespace, this.ServiceName, this.NodeName) ;
+        getEnvInfoBuilder BuildInformation =new getEnvInfoBuilder(this.Namespace, this.NodeName, this.id) ;
         BuildInformation.turnOffSslValidation();
         String KubeUrl = this.KuberUrl + "/api/v1/namespaces/" + this.Namespace + "/pods/" + podsName;
         String AuthorizationValue = "Bearer " + this.Token;
@@ -77,20 +78,29 @@ public class EnvironmentInfo implements Action{
 
     @JavaScriptMethod
     public void refreshInformation() throws Exception {
-        getEnvInfoBuilder BuildInformation = new getEnvInfoBuilder(this.Namespace, this.ServiceName, this.NodeName) ;
-        JSONObject ServicesInfo = new JSONObject();
-        JSONObject ServiceInfo = new JSONObject();
+        getEnvInfoBuilder BuildInformation = new getEnvInfoBuilder(this.Namespace, this.NodeName, this.id) ;
+        JSONArray ServicesInfo = new JSONArray();
+        JSONArray ServicesWithId = new JSONArray();
         JSONArray PodsInfo = new JSONArray();
+        JSONArray PodsWithId = new JSONArray();
         PodsInfo = new JSONObject(BuildInformation.getKubeInfo(this.KuberUrl, this.Token, this.Namespace, "pods")).getJSONArray("items");
-        ServicesInfo = new JSONObject(BuildInformation.getKubeInfo(this.KuberUrl, this.Token, this.Namespace,"services"));
-        for(int i=0; i < ServicesInfo.getJSONArray("items").length(); i++){
-            if(ServicesInfo.getJSONArray("items").getJSONObject(i).getJSONObject("metadata").get("name").equals(this.ServiceName)){
-                ServiceInfo = ServicesInfo.getJSONArray("items").getJSONObject(i);
-                break;
+        ServicesInfo = new JSONObject(BuildInformation.getKubeInfo(this.KuberUrl, this.Token, this.Namespace,"services")).getJSONArray("items");
+        for(int i=0; i < ServicesInfo.length(); i++){
+            if(ServicesInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").has("id")){
+                if(ServicesInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").get("id").equals(this.id)){
+                    ServicesWithId.put(ServicesInfo.getJSONObject(i));
+                }
             }
         }
-        JSONArray ContainerInfo = BuildInformation.createContainerInfo(PodsInfo, ServiceInfo);
-        EnvironmentInfo buildAction = new EnvironmentInfo(ContainerInfo, this.run, this.Namespace, this.ServiceName, this.NodeName, this.Token, this.KuberUrl);
+        for(int i = 0; i < PodsInfo.length(); i++){
+            if(PodsInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").has("id")){
+                if(PodsInfo.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels").get("id").equals(this.id)){
+                    PodsWithId.put(PodsInfo.getJSONObject(i));
+                }
+            }
+        }
+        JSONArray ContainerInfo = BuildInformation.createContainerInfo(PodsWithId, ServicesWithId);
+        EnvironmentInfo buildAction = new EnvironmentInfo(ContainerInfo, this.run, this.Namespace, this.id, this.NodeName, this.Token, this.KuberUrl);
         run.replaceAction(buildAction);
     }
 
@@ -101,11 +111,11 @@ public class EnvironmentInfo implements Action{
     }
 
 
-    EnvironmentInfo(final JSONArray ContainerInfo, final Run<?, ?> run,String Namespace, String ServiceName, String NodeName, String Token, String KubeUrl) {
+    EnvironmentInfo(final JSONArray ContainerInfo, final Run<?, ?> run,String Namespace, String id, String NodeName, String Token, String KubeUrl) {
         this.ContainerInfo = ContainerInfo;
         this.run = run;
         this.NodeName = NodeName;
-        this.ServiceName = ServiceName;
+        this.id = id;
         this.Namespace = Namespace;
         this.Token = Token;
         this.KuberUrl = KubeUrl;

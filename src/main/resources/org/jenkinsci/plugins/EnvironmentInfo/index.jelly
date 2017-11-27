@@ -14,11 +14,26 @@
             padding: 15px;
             font-size: 15px
         }
+        #head {display:inline-block}
+        #refresh {
+            display:inline-block;
+            float:right;
+            padding-top: 18px;
+            padding-right: 8px;
+        }
+        #deleteNotify {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <l:layout>
             <l:main-panel>
-                <h1>Server Information</h1>
+
+                <div id="head"><h1>Server Information</h1></div>
+                <div id="refresh">
+                    <button onclick="refreshFunction()">Refresh</button>
+                </div>
+                <div id="deleteNotify"></div>
                 <table  style='width:100%' id='InfoTable'>
                     <tr>
                         <th>No</th>
@@ -31,15 +46,15 @@
                         <th>Action</th>
                     </tr>
                 </table>
-                <button onclick="refreshFunction()">Refresh</button>
-                <p id="demo"></p>
+
+
                 <p id="demo2"></p>
 
                 <script>
                     var myAction = <st:bind value="${it}"/>
                     function deleteFunction(name) {
                          myAction.deletePod(name,function(t){
-                                                    document.getElementById('demo').innerHTML = t.responseObject();
+                                                    document.getElementById('deleteNotify').innerHTML = t.responseObject();
                                                 });
                     }
                 </script>
@@ -83,6 +98,9 @@
                                                         if(JsonObject[i].ExternalInfo[h].hasOwnProperty("Port")){
                                                             Columns[5].innerHTML += JsonObject[i].ExternalInfo[h].Port + "<br/>";
                                                         }
+                                                    }
+                                                    for(var key in JsonObject[i].env){
+                                                         Columns[6].innerHTML += "<b>" + key +  ": " + "</b>"  + JsonObject[i].env[key] + "<br/>";
                                                     }
                                                     Columns[7].innerHTML = '<input id="Button" type="button" onclick="deleteFunction(\'' + JsonObject[i].PodName + '\')" value="Delete" />';
                                                 }
