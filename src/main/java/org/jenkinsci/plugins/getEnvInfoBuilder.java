@@ -99,7 +99,7 @@ public class getEnvInfoBuilder extends Builder implements SimpleBuildStep {
 
 
     public KubernetesCloud getKubeCloud() throws AbortException {
-        Cloud cloud = Jenkins.getInstance().getCloud("kubernetes");
+        Cloud cloud = Jenkins.getInstance().getCloud(this.getKubeCloudName());
         if(cloud instanceof KubernetesCloud){
             return (KubernetesCloud) cloud;
         } else{
@@ -238,19 +238,19 @@ public class getEnvInfoBuilder extends Builder implements SimpleBuildStep {
                     for(int k = 0; k < ServicesWithId.length(); k++){
                         if(this.compareServiceAndPods(ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONObject("selector"),
                                 PodsWithId.getJSONObject(i).getJSONObject("metadata").getJSONObject("labels"))){
-                            for(int x = 0; x < ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").length(); x++){
-                                if(ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("targetPort").equals(InternalPort.get("Port"))){
-                                    ExternalPort.put("Port", ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("nodePort"));
-                                    ExternalPort.put("ExternalIP",PodsWithId.getJSONObject(i).getJSONObject("status").get("hostIP"));
-                                    if (ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).has("name")){
-                                        ExternalPort.put("Service",ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("name"));
-                                    }else {
-                                        ExternalPort.put("Service","");
-                                    }
+                        for(int x = 0; x < ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").length(); x++){
+                            if(ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("targetPort").equals(InternalPort.get("Port"))){
+                                ExternalPort.put("Port", ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("nodePort"));
+                                ExternalPort.put("ExternalIP",PodsWithId.getJSONObject(i).getJSONObject("status").get("hostIP"));
+                                if (ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).has("name")){
+                                    ExternalPort.put("Service",ServicesWithId.getJSONObject(k).getJSONObject("spec").getJSONArray("ports").getJSONObject(x).get("name"));
+                                }else {
+                                    ExternalPort.put("Service","");
                                 }
                             }
                         }
                     }
+                }
                     InternalInfo.put(InternalPort);
                     ExternalInfo.put(ExternalPort);
                 }

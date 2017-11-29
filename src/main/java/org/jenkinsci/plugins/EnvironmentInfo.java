@@ -69,10 +69,18 @@ public class EnvironmentInfo implements Action{
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("DELETE");
         con.setRequestProperty("Authorization", AuthorizationValue);
-        String response = Integer.toString(con.getResponseCode());
-        Thread.sleep(20000);
+        int response = con.getResponseCode();
+        Thread.sleep(18000);
         this.refreshInformation();
-        return response;
+        String ResponseNotice;
+        if(response == 200){
+            ResponseNotice = "Server was deleted successfully";
+        }else if(response == 404){
+            ResponseNotice = "Server was already deleted before";
+        } else {
+            ResponseNotice = "An error occurred while deleting server";
+        }
+        return ResponseNotice;
     }
 
 
