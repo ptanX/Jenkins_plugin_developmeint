@@ -70,7 +70,7 @@ public class EnvironmentInfo implements Action{
         con.setRequestMethod("DELETE");
         con.setRequestProperty("Authorization", AuthorizationValue);
         int response = con.getResponseCode();
-        Thread.sleep(18000);
+        Thread.sleep(21000);
         this.refreshInformation();
         String ResponseNotice;
         if(response == 200){

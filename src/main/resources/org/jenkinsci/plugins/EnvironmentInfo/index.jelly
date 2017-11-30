@@ -52,11 +52,14 @@
 
                 <script>
                     var myAction = <st:bind value="${it}"/>
-                    function deleteFunction(name) {
+                    function deletePod(name){
+                         var e = document.getElementById(name);
+                          e.style.display = 'none';
+                         document.getElementById('deleteNotify').innerHTML = "Server is being deleted, please wait for a while";
                          myAction.deletePod(name,function(t){
                                                     document.getElementById('deleteNotify').innerHTML = t.responseObject();
-                                                });
-                         setTimeout(function(){location.reload(true)},20000);
+                                                    });
+                         setTimeout(function(){location.reload(true)},23000);
                     }
                 </script>
                 <script>
@@ -76,6 +79,7 @@
                                                 var Object = t.responseObject();
                                                 JsonObject = JSON.parse(Object);
                                                 var table = document.getElementById("InfoTable");
+                                                var ButtonElement = [];
                                                 for(var i = 0; i != JsonObject.length; i++){
                                                     var Columns = [];
                                                     var row = table.insertRow();
@@ -105,7 +109,7 @@
                                                     for(var key in JsonObject[i].env){
                                                          Columns[6].innerHTML += "<b>" + key +  ": " + "</b>"  + JsonObject[i].env[key] + "<br/>";
                                                     }
-                                                    Columns[7].innerHTML = '<input id="Button" type="button" onclick="deleteFunction(\'' + JsonObject[i].PodName + '\')" value="Delete" />';
+                                                     Columns[7].innerHTML = '<input id= "' + JsonObject[i].PodName + '"  type="button" onclick="deletePod(\'' + JsonObject[i].PodName + '\');" value="Delete" />';
                                                 }
 
                                             });
